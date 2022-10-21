@@ -28,10 +28,13 @@ function Slider() {
     },
   ];
 
+  const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
   const [activeAlbum, setActiveAlbum] = useState(albums[0].title);
+
   const section = useRef();
   let imageList = useRef(null);
   let infoList = useRef(null);
+
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.to(infoList.children[0], {
@@ -43,7 +46,80 @@ function Slider() {
     return () => ctx.revert();
   }, []);
 
-  const nextSlide = () => {};
+  const textIn = () => {
+    gsap.from(".quote", {
+      opacity: 0,
+      y: 50,
+
+      stagger: {
+        amount: 0.5,
+      },
+      ease: "power2.out",
+    });
+  };
+
+  const slideLeft = (count) => {
+    gsap.to(imageList.children[activeAlbumIndex], {
+      opacity: 0,
+      scale: 1.3,
+      duration: 0.4,
+      repeat: 1,
+      yoyo: true,
+    });
+    gsap.from(imageList.children[activeAlbumIndex + 1], {
+      scale: 1.2,
+      duration: 1,
+    });
+    gsap.to(imageList, {
+      x: -460 * count,
+      duration: 1,
+      ease: "power3.out",
+    });
+  };
+  const slideRight = (count) => {
+    gsap.to(imageList.children[activeAlbumIndex], {
+      opacity: 0,
+      duration: 0.4,
+      repeat: 1,
+      yoyo: true,
+    });
+    gsap.from(imageList.children[activeAlbumIndex - 1], {
+      scale: 1.2,
+      duration: 1,
+    });
+    gsap.to(imageList, {
+      x: -460 * count,
+      duration: 1,
+      ease: "expo.out",
+    });
+  };
+
+  const nextSlide = () => {
+    textIn();
+    let albumLength = albums.length;
+
+    let count = (activeAlbumIndex + 1) % albumLength; // starting from 1
+    setActiveAlbumIndex(count);
+    setActiveAlbum(albums[count].title);
+
+    // slide image
+    slideLeft(count);
+
+    // text animations
+    // textOut(count);
+  };
+  const prevSlide = () => {
+    textIn();
+    let albumLength = albums.length;
+
+    let count = (activeAlbumIndex + albumLength - 1) % albumLength; // starting from the last
+
+    setActiveAlbumIndex(count);
+    setActiveAlbum(albums[count].title);
+
+    // slide image
+    slideRight(count);
+  };
 
   return (
     <section
@@ -52,16 +128,19 @@ function Slider() {
     >
       <h1 className="text-6xl font-bold mb-[4rem]">Discography</h1>
       <div className="testinonial-container w-[1280px] h-[680px] relative">
-        <div className="arrows-left absolute top-0 bottom-0 flex justify-center items-center cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out">
+        <div
+          className="arrows-left absolute top-0 bottom-0 flex justify-center items-center cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out"
+          onClick={prevSlide}
+        >
           <svg className="w-10 h-8">
             <ArrowLeftIcon />
           </svg>
         </div>
-        <div className="inner flex justify-center items-center h-[600px] border">
-          <div className="t-image justify-center items-center w-[500px] h-[500px] after:content-[''] after:absolute after:w-[250px] after:h-[250px] after:bg-[#3f56da] after:left-[10px] after:top-0 after:rounded-full after:z-[-9]">
+        <div className="inner flex  justify-center items-center h-[600px]">
+          <div className="t-image outline outline-[0.4rem] outline-offset-[0.3rem] flex overflow-hidden justify-center items-center w-[460px] h-[460px] after:content-[''] after:absolute after:w-[250px] after:h-[250px] after:bg-[#3f56da] after:left-[10px] after:top-0 after:rounded-full after:z-[-9]">
             <ul
               ref={(el) => (imageList = el)}
-              className="flex absolute h-[460px] w-[460px] shadow-[0px_0px_40px_rgba(0,0,10,0.25)] overflow-hidden"
+              className="flex  h-[460px] w-[460px] shadow-[0px_0px_40px_rgba(0,0,10,0.25)] "
             >
               {albums &&
                 albums.map((item, index) => {
@@ -80,13 +159,15 @@ function Slider() {
                         objectFit="cover"
                         loading="lazy"
                         placeholder="blur"
+                        alt={`${item.name}_image`}
+                        className="h-[460px] w-[460px]"
                       />
                     </li>
                   );
                 })}
             </ul>
           </div>
-          <div className="t-content w-[500px] h-[600px] flex items-center">
+          <div className="t-content m-5 w-[500px] h-[600px] flex items-center">
             <ul
               ref={(el) => (infoList = el)}
               className="absolute overflow-hidden w-[500px] h-[400px] "
@@ -97,8 +178,8 @@ function Slider() {
                     <li
                       key={index}
                       className={`${
-                        activeAlbum === item.title ? "display" : "hidden"
-                      } w-[500px] h-[400px] flex items-center absolute opacity-0`}
+                        activeAlbum === item.title ? "active" : "hidden"
+                      } w-[500px] h-[400px] flex items-center absolute`}
                     >
                       <div className="content-inner ">
                         <p className="quote items-center justify-center text-2xl tracking-[0.88px] text-[#a09da6]">
@@ -114,7 +195,10 @@ function Slider() {
             </ul>
           </div>
         </div>
-        <div className="arrows-right absolute top-0 bottom-0 flex justify-center items-center right-0 cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out">
+        <div
+          className="arrows-right absolute top-0 bottom-0 flex justify-center items-center right-0 cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out"
+          onClick={nextSlide}
+        >
           <svg className="w-10 h-8">
             <ArrowRightIcon />
           </svg>
