@@ -12,18 +12,21 @@ import { useRef, useEffect, useState, useLayoutEffect } from "react";
 function Slider() {
   const albums = [
     {
-      name: "Crash Landing On You",
+      name: "Hotel California",
       title: "사랑의 불시착",
+      title_jp: "ダウンタウン",
       image: image_1,
     },
     {
       name: "Our Beloved Summer",
       title: "그 해 우리는",
+      title_jp: "その年、私たちは",
       image: image_2,
     },
     {
       name: "Mr.Sunshine",
       title: "미스터 션샤인",
+      title_jp: "ミスター・サンシャイン",
       image: image_3,
     },
   ];
@@ -35,7 +38,7 @@ function Slider() {
   let imageList = useRef(null);
   let infoList = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.to(infoList.children[0], {
         opacity: 1,
@@ -126,7 +129,7 @@ function Slider() {
       ref={section}
       className="section flex flex-col h-screen w-full justify-center items-center after:absolute after:bg-[#f2f2f6] after:w-[50%] after:h-[550px] after:right-0 after:bottom-0 after:opacity-80 after:-z-10"
     >
-      <h1 className="text-6xl font-bold mb-[4rem]">Discography</h1>
+      <h1 className="text-6xl font-bold mb-[4rem]">Photography</h1>
       <div className="testinonial-container w-[1280px] h-[680px] relative">
         <div
           className="arrows-left absolute top-0 bottom-0 flex justify-center items-center cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out"
@@ -137,10 +140,10 @@ function Slider() {
           </svg>
         </div>
         <div className="inner flex  justify-center items-center h-[600px]">
-          <div className="t-image outline outline-[0.4rem] outline-offset-[0.3rem] flex overflow-hidden justify-center items-center w-[460px] h-[460px] after:content-[''] after:absolute after:w-[250px] after:h-[250px] after:bg-[#3f56da] after:left-[10px] after:top-0 after:rounded-full after:z-[-9]">
+          <div className="t-image outline outline-[0.4rem] outline-offset-[0.3rem] flex overflow-hidden justify-center items-center w-[460px] h-[460px] after:content-[''] after:absolute after:w-[270px] after:h-[270px] after:bg-[#455ff5] after:left-[10px] after:top-0 after:rounded-full after:z-[-9]">
             <ul
               ref={(el) => (imageList = el)}
-              className="flex  h-[460px] w-[460px] shadow-[0px_0px_40px_rgba(0,0,10,0.25)] "
+              className="flex h-[460px] w-[460px] shadow-[0px_0px_40px_rgba(0,0,10,0.25)] "
             >
               {albums &&
                 albums.map((item, index) => {
@@ -182,11 +185,14 @@ function Slider() {
                       } w-[500px] h-[400px] flex items-center absolute`}
                     >
                       <div className="content-inner ">
-                        <p className="quote items-center justify-center text-2xl tracking-[0.88px] text-[#a09da6]">
+                        <p className="quote font-noto items-center justify-center text-2xl tracking-[0.88px] text-[#a09da6]">
                           {item.title}
                         </p>
                         <p className="quote font-bold text-4xl tracking-[0.88px]">
                           {item.name}
+                        </p>
+                        <p className="quote font-kosugi text-[2.5rem] tracking-[0.88px] mt-3">
+                          {item.title_jp}
                         </p>
                       </div>
                     </li>
