@@ -4,7 +4,7 @@ function Layout(pageProps) {
   return (
     <>
       <Head>
-        <title>{pageProps.title}</title>
+        <title>Gsap Slider</title>
         <meta name="description" content="website build with gsap" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />

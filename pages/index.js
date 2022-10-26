@@ -2,8 +2,8 @@ import Slider from "../components/Slider";
 
 export default function Home() {
   return (
-    <section>
+    <main>
       <Slider />
-    </section>
+    </main>
   );
 }

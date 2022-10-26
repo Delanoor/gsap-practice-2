@@ -7,7 +7,8 @@ import { gsap } from "gsap";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 
-import { useRef, useEffect, useState, useLayoutEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 
 function Slider() {
   const albums = [
@@ -34,15 +35,17 @@ function Slider() {
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
   const [activeAlbum, setActiveAlbum] = useState(albums[0].title);
 
+  const [isTweening, setIsTweening] = useState(false);
+
   const section = useRef();
   let imageList = useRef(null);
   let infoList = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.to(infoList.children[0], {
         opacity: 1,
-        duration: 1,
+        duration: 3,
       });
     }, section);
 
@@ -50,6 +53,7 @@ function Slider() {
   }, []);
 
   const textIn = () => {
+    setIsTweening(true);
     gsap.from(".quote", {
       opacity: 0,
       y: 50,
@@ -58,6 +62,9 @@ function Slider() {
         amount: 0.5,
       },
       ease: "power2.out",
+      onComplete: () => {
+        setIsTweening(false);
+      },
     });
   };
 
@@ -73,6 +80,7 @@ function Slider() {
       scale: 1.2,
       duration: 1,
     });
+
     gsap.to(imageList, {
       x: -460 * count,
       duration: 1,
@@ -98,7 +106,6 @@ function Slider() {
   };
 
   const nextSlide = () => {
-    textIn();
     let albumLength = albums.length;
 
     let count = (activeAlbumIndex + 1) % albumLength; // starting from 1
@@ -106,13 +113,15 @@ function Slider() {
     setActiveAlbum(albums[count].title);
 
     // slide image
+
     slideLeft(count);
+    textIn();
 
     // text animations
     // textOut(count);
   };
+
   const prevSlide = () => {
-    textIn();
     let albumLength = albums.length;
 
     let count = (activeAlbumIndex + albumLength - 1) % albumLength; // starting from the last
@@ -122,7 +131,14 @@ function Slider() {
 
     // slide image
     slideRight(count);
+    textIn();
   };
+
+  //   console.log(
+  //     gsap.globalTimeline.getChildren().filter((tween) => tween.isActive())
+  //   );
+
+  //   console.log(gsap.globalTimeline.getChildren().length);
 
   return (
     <section
@@ -132,7 +148,10 @@ function Slider() {
       <h1 className="text-6xl font-bold mb-[4rem]">Photography</h1>
       <div className="testinonial-container w-[1280px] h-[680px] relative">
         <div
-          className="arrows-left absolute top-0 bottom-0 flex justify-center items-center cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out"
+          className={`${
+            isTweening ? "hidden" : ""
+          } arrows-left absolute top-0 bottom-0 flex justify-center items-center 
+          cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out`}
           onClick={prevSlide}
         >
           <svg className="w-10 h-8">
@@ -201,14 +220,18 @@ function Slider() {
             </ul>
           </div>
         </div>
-        <div
-          className="arrows-right absolute top-0 bottom-0 flex justify-center items-center right-0 cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] rounded-[8px] w-[100px] duration-300 ease-in-out"
+        <button
+          type="button"
+          className={`${
+            isTweening ? "hidden" : ""
+          } arrows-right absolute top-0 bottom-0 flex justify-center items-center right-0 cursor-pointer hover:shadow-[0px_0px_30px_rgba(0,0,80,0.05)] 
+          rounded-[8px] w-[100px] duration-300 ease-in-out`}
           onClick={nextSlide}
         >
           <svg className="w-10 h-8">
             <ArrowRightIcon />
           </svg>
-        </div>
+        </button>
       </div>
     </section>
   );
